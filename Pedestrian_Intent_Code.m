@@ -1,14 +1,12 @@
 clc; clear; close all;
 
-% ----------------------------
 % Hidden Intent
-% ----------------------------
+
 intents = ["CROSS", "STOP", "TURN"];
 intent = intents(randi(3));
 
-% ----------------------------
 % Initial Conditions
-% ----------------------------
+
 x = -2 + 4*rand;          % random X (-2 to 2)
 y = 4 + rand;             % sidewalk (4 to 5)
 
@@ -21,9 +19,9 @@ positions = [];
 speeds = [];
 headings = [];
 
-% ----------------------------
+
 % Figure Setup
-% ----------------------------
+
 figure; hold on;
 
 % Sidewalk
@@ -54,20 +52,18 @@ ylabel("Y Position");
 dot = plot(x, y, 'ro', 'MarkerFaceColor', 'r');
 path = plot(x, y, 'b-', 'LineWidth', 1.5);
 
-% ----------------------------
-% Simulation Loop
-% ----------------------------
+% Simulation
+
 for t = 1:60
 
-    % Add slight randomness
+    % slight randomness
     speed = speed + (rand*0.04 - 0.02);
     speed = max(speed, 0);
 
     heading = heading + (rand-0.5)*0.05;
 
-    % ----------------------------
-    % Intent Behavior
-    % ----------------------------
+ % Intent Behavior
+
     if intent == "CROSS"
         % Move toward road
         heading = -pi/2 + (rand-0.5)*0.1;
@@ -88,16 +84,15 @@ for t = 1:60
         heading = heading + 0.08;
     end
 
-    % ----------------------------
-    % Motion Update
-    % ----------------------------
+
+    %  Update Motion
     vx = speed * cos(heading);
     vy = speed * sin(heading);
 
     x = x + vx * dt;
     y = y + vy * dt;
 
-    % 🚨 HARD STOP before curb (FIXED)
+    % Ensure stop before curb
     if intent == "STOP" && y <= 0.05
         y = 0.05;
         speed = 0;
@@ -115,9 +110,8 @@ for t = 1:60
     pause(0.05);
 end
 
-% ----------------------------
+
 % Prediction Logic
-% ----------------------------
 if min(speeds) < 0.2
     predicted = "STOP";
 elseif abs(headings(end) - headings(1)) > 0.5
@@ -126,9 +120,7 @@ else
     predicted = "CROSS";
 end
 
-% ----------------------------
-% Display Results
-% ----------------------------
+% Results
 text(-4.5, 5.5, "True: " + intent, 'FontSize', 12);
 text(-4.5, 5.0, "Predicted: " + predicted, 'FontSize', 12);
 
